@@ -1,0 +1,782 @@
+<!--
+  App educativa "Descubre Ceuta" - v2.0 INFANTIL
+  Diseñada para niños de 4 años
+  - Voz infantil guía toda la experiencia
+  - Botones con imágenes (sin texto)
+  - Animaciones y recompensas visuales
+  - Imágenes reales de Ceuta
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>¡Descubre Ceuta! 🌟</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky: #5BC8F5;
+      --sun: #FFD93D;
+      --grass: #6BCB77;
+      --coral: #FF6B6B;
+      --purple: #C77DFF;
+      --white: #FFFDF7;
+      --dark: #2D2D2D;
+      --shadow: rgba(0,0,0,0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--sky);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Nubes animadas de fondo */
+    .cloud {
+      position: fixed;
+      background: white;
+      border-radius: 50px;
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+    .cloud-1 { width: 120px; height: 40px; top: 8%; left: -140px; animation: floatCloud 20s linear infinite; }
+    .cloud-1::before { width: 60px; height: 60px; top: -30px; left: 15px; }
+    .cloud-1::after { width: 45px; height: 45px; top: -20px; left: 50px; }
+
+    .cloud-2 { width: 90px; height: 30px; top: 15%; left: -110px; animation: floatCloud 28s linear infinite 8s; }
+    .cloud-2::before { width: 45px; height: 45px; top: -22px; left: 10px; }
+    .cloud-2::after { width: 35px; height: 35px; top: -15px; left: 38px; }
+
+    .cloud-3 { width: 150px; height: 45px; top: 5%; left: -170px; animation: floatCloud 35s linear infinite 15s; }
+    .cloud-3::before { width: 70px; height: 70px; top: -35px; left: 20px; }
+    .cloud-3::after { width: 55px; height: 55px; top: -25px; left: 65px; }
+
+    @keyframes floatCloud {
+      from { left: -200px; }
+      to { left: 110vw; }
+    }
+
+    /* Suelo animado */
+    .ground {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, var(--grass), #4a9e55);
+      border-radius: 60% 60% 0 0 / 30px 30px 0 0;
+      z-index: 0;
+    }
+    .ground::before {
+      content: '🌸🌼🌺🌸🌼🌺🌸🌼';
+      position: absolute;
+      top: 5px; left: 5%;
+      font-size: 22px;
+      letter-spacing: 15px;
+    }
+
+    /* Contenido principal */
+    #app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 15px 100px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      max-width: 600px;
+      background: var(--sun);
+      border-radius: 0 0 40px 40px;
+      padding: 15px 20px 20px;
+      box-shadow: 0 6px 20px var(--shadow);
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(28px, 7vw, 42px);
+      color: var(--dark);
+      text-shadow: 3px 3px 0 rgba(255,255,255,0.5);
+      letter-spacing: 1px;
+    }
+    header h1 span {
+      display: inline-block;
+      animation: wobble 2s ease-in-out infinite;
+    }
+    @keyframes wobble {
+      0%,100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+
+    /* Personaje mascota */
+    #mascota {
+      font-size: 60px;
+      margin: 10px 0 5px;
+      display: block;
+      animation: jump 1s ease-in-out infinite;
+      cursor: pointer;
+      filter: drop-shadow(0 4px 6px var(--shadow));
+    }
+    @keyframes jump {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(5deg); }
+    }
+
+    /* Burbuja de texto / pista */
+    #burbuja {
+      background: white;
+      border-radius: 30px;
+      padding: 15px 25px;
+      max-width: 500px;
+      width: 92%;
+      margin: 12px auto;
+      box-shadow: 0 4px 15px var(--shadow);
+      font-size: clamp(16px, 4.5vw, 22px);
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.4;
+      position: relative;
+      border: 4px solid var(--sun);
+      text-align: center;
+    }
+    #burbuja::before {
+      content: '';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      border: 10px solid transparent;
+      border-bottom-color: var(--sun);
+    }
+
+    /* Contenedor de imagen principal */
+    #foto-container {
+      width: 92%;
+      max-width: 500px;
+      margin: 10px auto;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px var(--shadow);
+      border: 6px solid white;
+      position: relative;
+      background: #eee;
+    }
+    #imagen {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.4s;
+    }
+    #foto-container:hover #imagen { transform: scale(1.04); }
+
+    /* Botón de repetir pista */
+    #btn-repetir {
+      background: var(--purple);
+      border: none;
+      border-radius: 50%;
+      width: 52px; height: 52px;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+      margin: 8px auto;
+    }
+    #btn-repetir:hover { transform: scale(1.15); background: #a855f7; }
+    #btn-repetir:active { transform: scale(0.9); }
+
+    /* Área de opciones (botones con imagen) */
+    #opciones {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 8px auto;
+      max-width: 520px;
+      width: 92%;
+    }
+
+    .btn-opcion {
+      flex: 1 1 180px;
+      max-width: 220px;
+      background: white;
+      border: 5px solid #ddd;
+      border-radius: 20px;
+      padding: 8px;
+      cursor: pointer;
+      box-shadow: 0 5px 18px var(--shadow);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+      position: relative;
+    }
+    .btn-opcion:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+      border-color: var(--sun);
+    }
+    .btn-opcion:active { transform: scale(0.95); }
+    .btn-opcion img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 13px;
+      display: block;
+      pointer-events: none;
+    }
+    .btn-opcion .emoji-tipo {
+      font-size: 28px;
+      margin-top: 5px;
+      display: block;
+      text-align: center;
+    }
+
+    /* Animación correcta */
+    .btn-opcion.correcto {
+      border-color: var(--grass);
+      background: #d4f7d4;
+      animation: correctAnim 0.5s ease;
+    }
+    @keyframes correctAnim {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.12) rotate(3deg); }
+      70% { transform: scale(0.97) rotate(-2deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Animación incorrecta */
+    .btn-opcion.incorrecto {
+      border-color: var(--coral);
+      background: #ffe0e0;
+      animation: wrongAnim 0.4s ease;
+    }
+    @keyframes wrongAnim {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      80% { transform: translateX(-6px); }
+    }
+
+    /* Barra de progreso */
+    #progreso-bar-wrap {
+      width: 92%;
+      max-width: 500px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 20px;
+      height: 18px;
+      margin: 8px auto;
+      overflow: hidden;
+      border: 3px solid rgba(255,255,255,0.8);
+    }
+    #progreso-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--grass), var(--sun));
+      border-radius: 20px;
+      transition: width 0.6s ease;
+      min-width: 18px;
+    }
+
+    /* Estrellas */
+    #star-container {
+      min-height: 50px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 4px auto;
+      max-width: 500px;
+    }
+    .star {
+      font-size: 36px;
+      display: inline-block;
+      animation: popStar 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transform: scale(0);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+    @keyframes popStar {
+      0% { transform: scale(0) rotate(-30deg); }
+      60% { transform: scale(1.3) rotate(10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    /* Pantalla de celebración final */
+    #pantalla-final {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #FFD93D, #FF6B6B, #C77DFF, #6BCB77);
+      background-size: 400% 400%;
+      animation: gradientShift 3s ease infinite;
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+    }
+    @keyframes gradientShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    #pantalla-final .big-emoji {
+      font-size: 100px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.2); }
+      to { transform: rotate(360deg) scale(1); }
+    }
+    #pantalla-final h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(36px, 10vw, 64px);
+      color: white;
+      text-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+      margin: 20px 0;
+    }
+    #pantalla-final .estrellas-finales {
+      font-size: 50px;
+      letter-spacing: 8px;
+      margin: 10px 0;
+    }
+    #btn-reiniciar {
+      margin-top: 25px;
+      background: white;
+      border: none;
+      border-radius: 50px;
+      padding: 18px 45px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 26px;
+      color: var(--dark);
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    #btn-reiniciar:hover { transform: scale(1.08); }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 12px; height: 12px;
+      border-radius: 3px;
+      pointer-events: none;
+      z-index: 200;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Modo profesor */
+    #modoProfe {
+      display: none;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 500px;
+      width: 92%;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    #modoProfe h2 { font-family: 'Fredoka One', cursive; color: var(--dark); margin-bottom: 10px; }
+    #modoProfe input {
+      display: block; width: 100%; padding: 10px;
+      margin: 6px 0; border-radius: 10px;
+      border: 2px solid #ddd; font-size: 15px; font-family: 'Nunito', sans-serif;
+    }
+    #modoProfe button {
+      background: #008CBA; color: white; border: none;
+      padding: 10px 20px; border-radius: 10px; font-size: 16px;
+      cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700;
+    }
+    #modoProfe ul { text-align: left; padding-left: 20px; }
+    #modoProfe li { margin: 4px 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- Nubes de fondo -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="ground"></div>
+
+  <div id="app">
+    <header onclick="clickTitulo()">
+      <h1>🌍 ¡Descubre <span>Ceuta</span>! 🌟</h1>
+    </header>
+
+    <div id="mascota" onclick="repetirPista()" title="Tócame para escuchar">🦁</div>
+
+    <div id="burbuja">¡Hola! ¿Jugamos juntos? 🎉</div>
+
+    <div id="foto-container">
+      <img id="imagen" src="" alt="Lugar de Ceuta">
+    </div>
+
+    <button id="btn-repetir" onclick="repetirPista()" title="Escuchar de nuevo">🔊</button>
+
+    <div id="progreso-bar-wrap">
+      <div id="progreso-bar" style="width: 0%"></div>
+    </div>
+
+    <div id="opciones"></div>
+
+    <div id="star-container"></div>
+  </div>
+
+  <!-- Pantalla final de celebración -->
+  <div id="pantalla-final">
+    <div class="big-emoji">🏆</div>
+    <h2>¡Lo conseguiste!</h2>
+    <div class="estrellas-finales" id="estrellas-finales-txt"></div>
+    <button id="btn-reiniciar" onclick="reiniciar()">▶ ¡Otra vez! 🎊</button>
+  </div>
+
+  <!-- Modo profesor (oculto) -->
+  <div id="modoProfe">
+    <h2>🎓 Modo Profesor</h2>
+    <p style="font-size:14px;margin-bottom:10px;">Agregar nuevo lugar:</p>
+    <input type="text" id="input-name" placeholder="Nombre del lugar">
+    <input type="text" id="input-type" placeholder="Tipo (estatua, calle...)">
+    <input type="url" id="input-img" placeholder="URL de imagen">
+    <input type="text" id="input-hint" placeholder="Pista hablada para niños">
+    <button onclick="addLugar()">💾 Guardar lugar</button>
+    <h3 style="margin-top:15px;">Lugares actuales:</h3>
+    <ul id="lista-lugares"></ul>
+  </div>
+
+  <!-- Audios -->
+  <audio id="audio-bien" preload="auto"></audio>
+  <audio id="audio-mal" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing_sound_effect.ogg" preload="auto"></audio>
+
+  <script>
+    // ─── DATOS ──────────────────────────────────────────────────────────────────
+    let lugares = [
+      {
+        name: "Murallas Reales de Ceuta",
+        type: "muralla",
+        img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Murallas_Reales_de_Ceuta.jpg",
+        hint: "¡Mira qué muralla tan grande! ¿Puedes señalar la muralla?",
+        emoji: "🏰"
+      },
+      {
+        name: "Monte Hacho",
+        type: "montaña",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Monte_Hacho_%28Ceuta%29.jpg/960px-Monte_Hacho_%28Ceuta%29.jpg",
+        hint: "¡Qué montaña tan bonita junto al mar! ¿Dónde está la montaña?",
+        emoji: "⛰️"
+      },
+      {
+        name: "Estatua de Hércules",
+        type: "estatua",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/H%C3%A9rcules_Abyla_y_Calpe.jpg/960px-H%C3%A9rcules_Abyla_y_Calpe.jpg",
+        hint: "¡Es un señor muy fuerte hecho de piedra! ¿Puedes señalar la estatua?",
+        emoji: "🗿"
+      },
+      {
+        name: "Calipso",
+        type: "estatua",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Estatua_de_la_ninfa_Calipso._Ceuta_%28Spain%29.jpg/960px-Estatua_de_la_ninfa_Calipso._Ceuta_%28Spain%29.jpg",
+        hint: "¡Es una princesa mágica del mar hecha de piedra! ¿La puedes ver?",
+        emoji: "🧜"
+      },
+      {
+        name: "Enrique el Navegante",
+        type: "estatua",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Enrique_el_Navegante.jpg/500px-Enrique_el_Navegante.jpg",
+        hint: "¡Este capitán navegó por todos los mares! ¿Dónde está el capitán?",
+        emoji: "⛵"
+      },
+      {
+        name: "Gran Vía con la Catedral",
+        type: "calle",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gran_V%C3%ADa_y_catedral.jpg/500px-Gran_V%C3%ADa_y_catedral.jpg",
+        hint: "¡Mira qué iglesia tan alta y qué calle tan larga! ¿Puedes señalar las torres?",
+        emoji: "⛪"
+      },
+      {
+        name: "Paseo de las Palmeras",
+        type: "paseo",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Paseo_de_las_Palmeras%2C_Ceuta.jpg/960px-Paseo_de_las_Palmeras%2C_Ceuta.jpg",
+        hint: "¡Qué árboles tan altos y tan verdes junto al mar! ¿Los ves?",
+        emoji: "🌴"
+      }
+    ];
+
+    // ─── ESTADO ─────────────────────────────────────────────────────────────────
+    let current = 0;
+    let score = 0;
+    let bloqueado = false;
+    let mascotas = ["🦁","🐸","🦊","🐧","🦄","🐻","🐨","🦋"];
+    let mascotaActual = 0;
+    let clicksTitle = 0;
+    let pistaActual = "";
+
+    // ─── MELODÍA DE VICTORIA ────────────────────────────────────────────────────
+    function tocarVictoria() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      // Notas: Do Mi Sol Do' Mi' Sol' (fanfarria alegre)
+      const notas = [
+        { freq: 523.25, t: 0.00 },   // Do5
+        { freq: 659.25, t: 0.18 },   // Mi5
+        { freq: 783.99, t: 0.36 },   // Sol5
+        { freq: 1046.5, t: 0.54 },   // Do6
+        { freq: 783.99, t: 0.72 },   // Sol5
+        { freq: 1046.5, t: 0.88 },   // Do6
+      ];
+      notas.forEach(({ freq, t }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+        gain.gain.setValueAtTime(0.0, ctx.currentTime + t);
+        gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.28);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.30);
+      });
+    }
+
+    // ─── INICIO ─────────────────────────────────────────────────────────────────
+    window.onload = () => {
+      lugares = lugares.sort(() => Math.random() - 0.5);
+      setTimeout(() => {
+        hablar("¡Hola amigo! Soy Leo el León. Vamos a descubrir Ceuta juntos. ¡Mira bien las fotos y toca la que te digo!");
+        setTimeout(() => mostrarLugar(0), 2500);
+      }, 600);
+    };
+
+    // ─── VOZ ────────────────────────────────────────────────────────────────────
+    function hablar(texto) {
+      window.speechSynthesis.cancel();
+      const msg = new SpeechSynthesisUtterance(texto);
+      msg.lang = "es-ES";
+      msg.pitch = 1.6;   // voz más aguda, infantil
+      msg.rate = 0.78;   // más lento, más claro
+      msg.volume = 1;
+
+      // Intentar seleccionar una voz femenina o infantil
+      const voices = window.speechSynthesis.getVoices();
+      const preferida = voices.find(v =>
+        v.lang.startsWith('es') && (v.name.toLowerCase().includes('child') ||
+        v.name.toLowerCase().includes('niña') ||
+        v.name.toLowerCase().includes('female') ||
+        v.name.toLowerCase().includes('monica') ||
+        v.name.toLowerCase().includes('paulina') ||
+        v.name.toLowerCase().includes('lucia') ||
+        v.name.toLowerCase().includes('maria'))
+      ) || voices.find(v => v.lang.startsWith('es'));
+      if (preferida) msg.voice = preferida;
+
+      window.speechSynthesis.speak(msg);
+      pistaActual = texto;
+    }
+
+    // Cargar voces al inicio (algunos navegadores lo necesitan)
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {};
+    }
+
+    function repetirPista() {
+      if (pistaActual) hablar(pistaActual);
+      // Animación de la mascota
+      const m = document.getElementById('mascota');
+      m.style.animation = 'none';
+      setTimeout(() => m.style.animation = '', 100);
+    }
+
+    // ─── MOSTRAR LUGAR ──────────────────────────────────────────────────────────
+    function mostrarLugar(index) {
+      const lugar = lugares[index];
+      bloqueado = false;
+
+      // Cambiar mascota
+      document.getElementById('mascota').textContent = mascotas[index % mascotas.length];
+
+      // Imagen y burbuja
+      document.getElementById('imagen').src = lugar.img;
+      document.getElementById('imagen').alt = lugar.name;
+      document.getElementById('burbuja').textContent = lugar.hint;
+
+      // Progreso
+      const pct = Math.round((index / lugares.length) * 100);
+      document.getElementById('progreso-bar').style.width = pct + '%';
+
+      // Opciones: la correcta + una aleatoria incorrecta
+      const otros = lugares.filter((_, i) => i !== index);
+      const incorrecto = otros[Math.floor(Math.random() * otros.length)];
+      let opciones = [{ lugar, correcto: true }, { lugar: incorrecto, correcto: false }];
+      opciones.sort(() => Math.random() - 0.5);
+
+      const cont = document.getElementById('opciones');
+      cont.innerHTML = '';
+      opciones.forEach(op => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-opcion';
+        btn.innerHTML = `
+          <img src="${op.lugar.img}" alt="${op.lugar.name}" loading="lazy">
+          <span class="emoji-tipo">${op.lugar.emoji}</span>
+        `;
+        btn.onclick = () => procesarRespuesta(btn, op.correcto, lugar);
+        cont.appendChild(btn);
+      });
+
+      // Hablar el nombre y luego la pista
+      setTimeout(() => hablar(`${lugar.name}... ${lugar.hint}`), 400);
+    }
+
+    // ─── PROCESAR RESPUESTA ─────────────────────────────────────────────────────
+    function procesarRespuesta(btn, correcto, lugar) {
+      if (bloqueado) return;
+      bloqueado = true;
+
+      if (correcto) {
+        btn.classList.add('correcto');
+        tocarVictoria();
+
+        // Añadir estrella con delay progresivo
+        setTimeout(() => {
+          const star = document.createElement('span');
+          star.className = 'star';
+          star.textContent = '⭐';
+          star.style.animationDelay = '0s';
+          document.getElementById('star-container').appendChild(star);
+        }, 200);
+
+        const mensajes = [
+          `¡Bravo! ¡Eres muy listo! Esto se llama... ¡${lugar.name}!`,
+          `¡Fantástico! ¡Bien hecho! Este lugar se llama... ¡${lugar.name}!`,
+          `¡Sí, sí, sí! ¡Eres increíble! Su nombre es... ¡${lugar.name}!`,
+          `¡Oooh qué bien! ¡Tú sí que sabes! Se llama... ¡${lugar.name}!`
+        ];
+        hablar(mensajes[Math.floor(Math.random() * mensajes.length)]);
+
+        setTimeout(() => {
+          current++;
+          if (current < lugares.length) {
+            mostrarLugar(current);
+          } else {
+            mostrarFinal();
+          }
+        }, 1800);
+
+      } else {
+        btn.classList.add('incorrecto');
+        document.getElementById('audio-mal').currentTime = 0;
+        document.getElementById('audio-mal').play().catch(() => {});
+
+        const animosTextos = [
+          "¡Uy! Esa no es. ¡Inténtalo de nuevo, tú puedes!",
+          "¡Casi! Mira bien las fotos. ¡Tú puedes!",
+          "¡Oops! Prueba otra vez. ¡Ánimo!"
+        ];
+        hablar(animosTextos[Math.floor(Math.random() * animosTextos.length)]);
+
+        setTimeout(() => {
+          btn.classList.remove('incorrecto');
+          bloqueado = false;
+        }, 1200);
+      }
+    }
+
+    // ─── PANTALLA FINAL ─────────────────────────────────────────────────────────
+    function mostrarFinal() {
+      document.getElementById('progreso-bar').style.width = '100%';
+
+      const pf = document.getElementById('pantalla-final');
+      const stars = document.getElementById('star-container').children.length;
+      document.getElementById('estrellas-finales-txt').textContent = '⭐'.repeat(Math.min(stars, 12));
+      pf.style.display = 'flex';
+
+      lanzarConfetti();
+      setTimeout(() => {
+        hablar("¡¡Felicidades!! ¡Has terminado el juego! ¡Eres un campeón! ¡Ceuta tiene lugares muy bonitos!");
+      }, 500);
+    }
+
+    function reiniciar() {
+      document.getElementById('pantalla-final').style.display = 'none';
+      document.getElementById('star-container').innerHTML = '';
+      current = 0;
+      score = 0;
+      lugares = lugares.sort(() => Math.random() - 0.5);
+      document.getElementById('progreso-bar').style.width = '0%';
+      hablar("¡Vamos a jugar otra vez! ¡Mira bien!");
+      setTimeout(() => mostrarLugar(0), 1500);
+    }
+
+    // ─── CONFETTI ───────────────────────────────────────────────────────────────
+    function lanzarConfetti() {
+      const colores = ['#FFD93D','#FF6B6B','#6BCB77','#5BC8F5','#C77DFF','#FF9A3C'];
+      for (let i = 0; i < 80; i++) {
+        setTimeout(() => {
+          const c = document.createElement('div');
+          c.className = 'confetti-piece';
+          c.style.cssText = `
+            left: ${Math.random() * 100}vw;
+            top: -20px;
+            background: ${colores[Math.floor(Math.random() * colores.length)]};
+            transform: rotate(${Math.random() * 360}deg);
+            animation-duration: ${1.5 + Math.random() * 2}s;
+            animation-delay: ${Math.random() * 0.5}s;
+          `;
+          document.body.appendChild(c);
+          setTimeout(() => c.remove(), 4000);
+        }, i * 30);
+      }
+    }
+
+    // ─── MODO PROFESOR ──────────────────────────────────────────────────────────
+    function clickTitulo() {
+      clicksTitle++;
+      if (clicksTitle >= 5) {
+        document.getElementById('modoProfe').style.display = 'block';
+        mostrarListaLugares();
+        clicksTitle = 0;
+      }
+    }
+
+    function mostrarListaLugares() {
+      const ul = document.getElementById('lista-lugares');
+      ul.innerHTML = '';
+      lugares.forEach((l, i) => {
+        const li = document.createElement('li');
+        li.textContent = `${i + 1}. ${l.name} [${l.type}] ${l.emoji}`;
+        ul.appendChild(li);
+      });
+    }
+
+    function addLugar() {
+      const name = document.getElementById('input-name').value.trim();
+      const type = document.getElementById('input-type').value.trim();
+      const img = document.getElementById('input-img').value.trim();
+      const hint = document.getElementById('input-hint').value.trim();
+      if (name && img) {
+        lugares.push({ name, type, img, hint: hint || `¿Puedes encontrar ${name}?`, emoji: '📍' });
+        mostrarListaLugares();
+        ['input-name','input-type','input-img','input-hint'].forEach(id => document.getElementById(id).value = '');
+        alert('¡Lugar guardado! Reinicia la app para jugarlo.');
+      }
+    }
+  </script>
+</body>
+</html>
